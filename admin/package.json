@@ -1,5 +1,5 @@
 {
-  "name": "bnfe",
+  "name": "benadmin",
   "version": "1.0.0",
   "scripts": {
     "dev": "vite",
@@ -8,16 +8,19 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.5",
+    "@uiw/react-md-editor": "^4.0.8",
     "axios": "^1.6.8",
     "framer-motion": "^11.0.0",
     "lucide-react": "^0.553.0",
+    "ra-data-simple-rest": "^5.12.3",
     "react": "^18.2.0",
+    "react-admin": "^5.12.3",
     "react-date-range": "^2.0.1",
     "react-dom": "^18.2.0",
-    "react-markdown": "^10.1.0",
     "react-router-dom": "^6.21.1",
-    "remark-breaks": "^4.0.0",
-    "remark-gfm": "^4.0.1",
     "swiper": "^11.1.5"
   },
   "devDependencies": {

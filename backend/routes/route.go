@@ -8,4 +8,5 @@ import (
 
 func SetupRoutes(mux *http.ServeMux, db *sql.DB) {
 	mux.HandleFunc("/api/artikel", handlers.GetArtikel(db))
+	mux.HandleFunc("/api/artikel/", handlers.GetArtikelBySlug(db))
 }
