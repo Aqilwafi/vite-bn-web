@@ -9,6 +9,20 @@ import (
 )
 
 func ConnectDB() (*sql.DB, error) {
+	// 🔹 Cek dulu apakah Railway kasih DATABASE_URL
+	if dbURL := os.Getenv("DATABASE_URL"); dbURL != "" {
+		db, err := sql.Open("postgres", dbURL)
+		if err != nil {
+			return nil, err
+		}
+		if err = db.Ping(); err != nil {
+			return nil, err
+		}
+		fmt.Println("✅ Database connected via DATABASE_URL (Railway mode)")
+		return db, nil
+	}
+
+	// 🔹 Jika tidak ada, berarti lokal/docker-compose mode
 	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		getEnv("DB_HOST", "db"),
@@ -23,12 +37,11 @@ func ConnectDB() (*sql.DB, error) {
 		return nil, err
 	}
 
-	// Tes koneksi
 	if err = db.Ping(); err != nil {
 		return nil, err
 	}
 
-	fmt.Println("✅ Database connected successfully!")
+	fmt.Println("✅ Database connected via local config (Dev mode)")
 	return db, nil
 }
 
