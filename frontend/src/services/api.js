@@ -1,10 +1,10 @@
 import axios from "axios";
 
 // Gunakan environment variable agar fleksibel antara dev & prod
-const API_BASE_URL = import.meta.env.VITE_API;
+const API_BASE_URL = import.meta.env.BE_URL;
 
 if (!API_BASE_URL) {
-  console.error("⚠️ VITE_API_URL is undefined!");
+  console.error("⚠️ BE_URL is undefined!");
 }
 
 const api = axios.create({
