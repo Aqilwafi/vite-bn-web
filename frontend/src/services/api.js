@@ -1,7 +1,10 @@
 import axios from "axios";
 
+// Gunakan environment variable agar fleksibel antara dev & prod
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
 const api = axios.create({
-  baseURL: "http://localhost:4000/api",
+  baseURL: `${API_BASE_URL}/api`,
   headers: { "Content-Type": "application/json" },
 });
 
