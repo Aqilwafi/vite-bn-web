@@ -9,28 +9,24 @@ import (
 )
 
 func ConnectDB() (*sql.DB, error) {
-	// 🔹 Cek dulu apakah Railway kasih DATABASE_URL
-	if dbURL := os.Getenv("DATABASE_URL"); dbURL != "" {
-		db, err := sql.Open("postgres", dbURL)
-		if err != nil {
-			return nil, err
-		}
-		if err = db.Ping(); err != nil {
-			return nil, err
-		}
-		fmt.Println("✅ Database connected via DATABASE_URL (Railway mode)")
-		return db, nil
-	}
+	var dsn string
 
-	// 🔹 Jika tidak ada, berarti lokal/docker-compose mode
-	dsn := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		getEnv("DB_HOST", "db"),
-		getEnv("DB_PORT", "5432"),
-		getEnv("DB_USER", "baca_user"),
-		getEnv("DB_PASSWORD", "baca_pass"),
-		getEnv("DB_NAME", "baca_db"),
-	)
+	// Jika Railway inject DATABASE_URL, pakai langsung
+	if os.Getenv("DATABASE_URL") != "" {
+		dsn = os.Getenv("DATABASE_URL")
+		fmt.Println("🔗 Using DATABASE_URL from environment")
+	} else {
+		// Jika lokal, pakai manual setup
+		dsn = fmt.Sprintf(
+			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			getEnv("DB_HOST", "localhost"),
+			getEnv("DB_PORT", "5432"),
+			getEnv("DB_USER", "baca_user"),
+			getEnv("DB_PASSWORD", "baca_pass"),
+			getEnv("DB_NAME", "baca_db"),
+		)
+		fmt.Println("🧩 Using local DB configuration")
+	}
 
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
@@ -41,7 +37,7 @@ func ConnectDB() (*sql.DB, error) {
 		return nil, err
 	}
 
-	fmt.Println("✅ Database connected via local config (Dev mode)")
+	fmt.Println("✅ Database connected successfully!")
 	return db, nil
 }
 
