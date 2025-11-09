@@ -12,6 +12,7 @@ export default function Home() {
     const fetchPosts = async () => {
       try {
         const response = await getArtikel();
+        console.log(response.data, Array.isArray(response.data));
         setPosts(response.data);
       } catch (error) {
         console.error("Gagal mengambil data artikel:", error);
