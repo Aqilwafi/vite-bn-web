@@ -8,7 +8,7 @@ if (!API_BASE_URL) {
 }
 
 const api = axios.create({
-  baseURL: `${API_BASE_URL}/api`,
+  baseURL: `${VITE_API_URL}/api`,
   headers: { "Content-Type": "application/json" },
 });
 
