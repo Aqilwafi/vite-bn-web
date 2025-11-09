@@ -35,7 +35,7 @@ func main() {
 		AllowedOrigins: []string{
 			"http://localhost:3000",          // FE lokal
 			"http://localhost:3333",          // Admin lokal
-			"https://frontend.up.railway.app", // FE di Railway
+			"https://bnfe-production.up.railway.app", // FE di Railway
 			"https://admin-panel.up.railway.app", // Admin di Railway
 		},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
