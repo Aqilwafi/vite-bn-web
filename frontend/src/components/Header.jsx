@@ -11,7 +11,7 @@ export default function Header({ searchQuery, setSearchQuery }) {
             <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
               <span className="text-white text-xs">🌿</span>
             </div>
-            <span className="font-semibold text-gray-800">BANTUR DALEM</span>
+            <span className="font-semibold text-gray-800">Baitun Naim</span>
           </div>
 
           {/* Navigation + Search */}
