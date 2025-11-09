@@ -12,31 +12,45 @@ import (
 func ConnectDB() (*sql.DB, error) {
 	var dsn string
 
-	if os.Getenv("DATABASE_URL") != "" {
-		dsn = os.Getenv("DATABASE_URL")
+	dbURL := os.Getenv("DATABASE_URL")
 
-		
+	if dbURL != "" {
+		// Railway biasanya pakai postgresql://
+		if strings.HasPrefix(dbURL, "postgresql://") {
+			dbURL = strings.Replace(dbURL, "postgresql://", "postgres://", 1)
+		}
 
-		fmt.Println("🔗 Using DATABASE_URL from environment")
+		// Tambahkan sslmode=require (Railway butuh SSL)
+		if !strings.Contains(dbURL, "sslmode=") {
+			if strings.Contains(dbURL, "?") {
+				dbURL += "&sslmode=require"
+			} else {
+				dbURL += "?sslmode=require"
+			}
+		}
+
+		dsn = dbURL
+		fmt.Println("🔗 Using DATABASE_URL from Railway")
 	} else {
+		// fallback lokal
 		dsn = fmt.Sprintf(
 			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-			getEnv("PGHOST", "localhost"),
-			getEnv("PGPORT", "5432"),
-			getEnv("PGUSER", "baca_user"),
-			getEnv("PGPASSWORD", "baca_pass"),
-			getEnv("PGDATABASE", "baca_db"),
+			getEnv("DB_HOST", "localhost"),
+			getEnv("DB_PORT", "5432"),
+			getEnv("DB_USER", "baca_user"),
+			getEnv("DB_PASSWORD", "baca_pass"),
+			getEnv("DB_NAME", "baca_db"),
 		)
 		fmt.Println("🧩 Using local DB configuration")
 	}
 
-	db, err := sql.Open("postgres", dsn)
+	db, err := sql.Open("postgres", strings.TrimSpace(dsn))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DB open error: %v", err)
 	}
 
 	if err = db.Ping(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DB ping error: %v", err)
 	}
 
 	fmt.Println("✅ Database connected successfully!")
