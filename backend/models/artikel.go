@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	
 )
 
 type Artikel struct {
@@ -20,7 +19,6 @@ type Artikel struct {
 	TanggalDibuat  string `json:"tanggal_dibuat"`
 	TanggalDiperbarui string `json:"tanggal_diperbarui"`
 }
-
 
 
 func GetAllArtikel(db *sql.DB) ([]Artikel, error) {
