@@ -1,9 +1,7 @@
 import { Admin, Resource, ListGuesser, EditGuesser } from "react-admin";
-import simpleRestProvider from "ra-data-simple-rest";
+import dataProvider from "./providers/data";
 import ArtikelCreate from "./pages/TambahArtikel";
 import Dashboard from "./pages/Dashboard";
-
-const dataProvider = simpleRestProvider("http://localhost:4000/api");
 
 function App() {
   return (
@@ -14,7 +12,6 @@ function App() {
         edit={EditGuesser}
         create={ArtikelCreate}
       />
-      
     </Admin>
   );
 }
