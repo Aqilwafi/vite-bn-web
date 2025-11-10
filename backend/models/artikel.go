@@ -121,7 +121,6 @@ func DeleteArtikelById(db *sql.DB, id string) error {
     return err
 }
 
-
 func InsertArtikel(db *sql.DB, artikel Artikel) (int, error) {
 	query := `INSERT INTO artikel 
 	(judul, slug, konten_md, ringkasan, gambar, kategori, penulis, waktu_baca, jumlah_komentar, unggulan)
