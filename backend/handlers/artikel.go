@@ -9,26 +9,49 @@ import (
 	"strings"
 )
 
-func GetArtikel(db *sql.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		listArtikel, err := models.GetAllArtikel(db)
-		if err != nil {
-			http.Error(w, "Database error", http.StatusInternalServerError)
-			return
-		}
+func Artikel(db *sql.DB) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        switch r.Method {
 
-		total := len(listArtikel)
+        case http.MethodGet:
+            // === List artikel untuk React-Admin ===
+            listArtikel, err := models.GetAllArtikel(db)
+            if err != nil {
+                http.Error(w, "Database error", http.StatusInternalServerError)
+                return
+            }
 
-		// === 🧠 Tambahan penting untuk react-admin ===
-		// agar pagination & CORS bekerja dengan benar
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Content-Range", fmt.Sprintf("artikel 0-%d/%d", total, total))
-		w.Header().Set("Access-Control-Expose-Headers", "Content-Range")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+            total := len(listArtikel)
+            w.Header().Set("Content-Type", "application/json")
+            w.Header().Set("Content-Range", fmt.Sprintf("artikel 0-%d/%d", total-1, total))
+            w.Header().Set("Access-Control-Expose-Headers", "Content-Range")
+            w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		// === Kirimkan data dalam bentuk JSON ===
-		json.NewEncoder(w).Encode(listArtikel)
-	}
+            json.NewEncoder(w).Encode(listArtikel)
+
+        case http.MethodPost:
+            // === Create artikel ===
+            var artikel models.Artikel
+            if err := json.NewDecoder(r.Body).Decode(&artikel); err != nil {
+                http.Error(w, err.Error(), http.StatusBadRequest)
+                return
+            }
+
+            id, err := models.InsertArtikel(db, artikel)
+            if err != nil {
+                http.Error(w, err.Error(), http.StatusInternalServerError)
+                return
+            }
+
+            artikel.ID = id
+            w.Header().Set("Content-Type", "application/json")
+            w.Header().Set("Access-Control-Allow-Origin", "*")
+            json.NewEncoder(w).Encode(artikel)
+
+        default:
+            http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+        }
+    }
 }
 
 func GetArtikelBySlug(db *sql.DB) http.HandlerFunc {
@@ -77,9 +100,9 @@ func ArtikelById(db *sql.DB) http.HandlerFunc {
                 return
             }
             w.Header().Set("Content-Type", "application/json")
-            w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Access-Control-Expose-Headers", "Content-Range")
-
+            w.Header().Set("Access-Control-Allow-Origin", "*")
+			
             json.NewEncoder(w).Encode(artikel)
 
         case http.MethodPut:
@@ -96,6 +119,7 @@ func ArtikelById(db *sql.DB) http.HandlerFunc {
             }
 
             w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Access-Control-Expose-Headers", "Content-Range")
             w.Header().Set("Access-Control-Allow-Origin", "*")
             json.NewEncoder(w).Encode(artikel)
 
@@ -113,32 +137,4 @@ func ArtikelById(db *sql.DB) http.HandlerFunc {
             http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
         }
     }
-}
-
-
-func CreateArtikel(db *sql.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-			return
-		}
-
-		var artikel models.Artikel
-		if err := json.NewDecoder(r.Body).Decode(&artikel); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		id, err := models.InsertArtikel(db, artikel)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		artikel.ID = id
-
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		json.NewEncoder(w).Encode(artikel)
-	}
 }
