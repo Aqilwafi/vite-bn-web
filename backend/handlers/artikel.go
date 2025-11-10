@@ -78,6 +78,8 @@ func ArtikelById(db *sql.DB) http.HandlerFunc {
             }
             w.Header().Set("Content-Type", "application/json")
             w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Expose-Headers", "Content-Range")
+
             json.NewEncoder(w).Encode(artikel)
 
         case http.MethodPut:
@@ -96,7 +98,7 @@ func ArtikelById(db *sql.DB) http.HandlerFunc {
             w.Header().Set("Content-Type", "application/json")
             w.Header().Set("Access-Control-Allow-Origin", "*")
             json.NewEncoder(w).Encode(artikel)
-			
+
 		case http.MethodDelete:
 			err := models.DeleteArtikelById(db, id)
 			if err != nil {
