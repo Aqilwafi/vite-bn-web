@@ -34,7 +34,8 @@ func main() {
 	corsHandler := cors.New(cors.Options{
 		AllowedOrigins: []string{
 			"http://localhost:3000",          // FE lokal
-			"http://localhost:3333",          // Admin lokal
+			"http://localhost:3333",         // Admin lokal
+			"http://localhost:4000",
 			"https://bnfe-production.up.railway.app", // FE di Railway
 			"https://bnadmin-production-f31e.up.railway.app", // Admin di Railway
 		},
