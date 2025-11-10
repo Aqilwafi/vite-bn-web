@@ -1,6 +1,6 @@
 import simpleRestProvider from "ra-data-simple-rest";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
+const API_URL = import.meta.env.VITE_API_URL || "https://bnadmin-production-f31e.up.railway.app/api";
 
 const simpleProvider = simpleRestProvider(API_URL);
 
