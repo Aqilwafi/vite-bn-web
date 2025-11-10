@@ -36,7 +36,7 @@ func main() {
 			"http://localhost:3000",          // FE lokal
 			"http://localhost:3333",          // Admin lokal
 			"https://bnfe-production.up.railway.app", // FE di Railway
-			"https://admin-panel.up.railway.app", // Admin di Railway
+			"https://bnadmin-production-f31e.up.railway.app", // Admin di Railway
 		},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization", "Range"},
