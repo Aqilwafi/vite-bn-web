@@ -14,7 +14,7 @@ const api = axios.create({
 
 // === Artikel ===
 export const getArtikel = () => api.get("/artikel");
-export const getArtikelBySlug = (slug) => api.get(`/artikel/${slug}`);
+export const getArtikelBySlug = (slug) => api.get(`/artikel/slug/${slug}`);
 
 // === Komentar ===
 export const getKomentarByArtikel = (artikelId) =>
