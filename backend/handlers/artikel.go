@@ -9,13 +9,12 @@ import (
 	"strings"
 )
 
-// List & Create Artikel
+// List + Create artikel
 func Artikel(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
-
 		case http.MethodGet:
-			// === List artikel untuk React-Admin ===
+			// List artikel
 			listArtikel, err := models.GetAllArtikel(db)
 			if err != nil {
 				http.Error(w, "Database error", http.StatusInternalServerError)
@@ -28,11 +27,10 @@ func Artikel(db *sql.DB) http.HandlerFunc {
 			w.Header().Set("Access-Control-Expose-Headers", "Content-Range")
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 
-			// React-Admin expects { data: [...] } for list
-			json.NewEncoder(w).Encode(map[string]interface{}{"data": listArtikel})
+			json.NewEncoder(w).Encode(listArtikel) // langsung array, jangan bungkus { data: ... }
 
 		case http.MethodPost:
-			// === Create artikel ===
+			// Create artikel
 			var artikel models.Artikel
 			if err := json.NewDecoder(r.Body).Decode(&artikel); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
@@ -48,7 +46,6 @@ func Artikel(db *sql.DB) http.HandlerFunc {
 			artikel.ID = id
 			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("Access-Control-Allow-Origin", "*")
-
 			json.NewEncoder(w).Encode(map[string]interface{}{"data": artikel})
 
 		default:
@@ -57,12 +54,9 @@ func Artikel(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// Get Artikel by Slug (untuk FE user)
+// Get artikel by slug
 func GetArtikelBySlug(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Content-Type", "application/json")
-
 		slug := strings.TrimPrefix(r.URL.Path, "/api/artikel/slug/")
 		if slug == "" {
 			http.Error(w, "Slug not found", http.StatusBadRequest)
@@ -79,11 +73,13 @@ func GetArtikelBySlug(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		json.NewEncoder(w).Encode(artikel)
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		json.NewEncoder(w).Encode(map[string]interface{}{"data": artikel})
 	}
 }
 
-// GetOne / Update / Delete Artikel by ID (untuk admin)
+// Get/Update/Delete artikel by ID
 func ArtikelById(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := strings.TrimPrefix(r.URL.Path, "/api/artikel/id/")
@@ -91,10 +87,6 @@ func ArtikelById(db *sql.DB) http.HandlerFunc {
 			http.Error(w, "Id not found", http.StatusBadRequest)
 			return
 		}
-
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Expose-Headers", "Content-Range")
 
 		switch r.Method {
 		case http.MethodGet:
@@ -107,7 +99,8 @@ func ArtikelById(db *sql.DB) http.HandlerFunc {
 				http.Error(w, "Database error", http.StatusInternalServerError)
 				return
 			}
-
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			json.NewEncoder(w).Encode(map[string]interface{}{"data": artikel})
 
 		case http.MethodPut:
@@ -123,6 +116,8 @@ func ArtikelById(db *sql.DB) http.HandlerFunc {
 				return
 			}
 
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			json.NewEncoder(w).Encode(map[string]interface{}{"data": artikel})
 
 		case http.MethodDelete:
@@ -132,8 +127,9 @@ func ArtikelById(db *sql.DB) http.HandlerFunc {
 				return
 			}
 
-			// React-Admin expects { data: previousData } for delete
-			json.NewEncoder(w).Encode(map[string]interface{}{"data": map[string]string{"id": id}})
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.WriteHeader(http.StatusNoContent) // React-Admin akan pakai previousData dari dataProvider
 
 		default:
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
