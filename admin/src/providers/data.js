@@ -33,10 +33,10 @@ const dataProvider = {
     return simpleProvider.update(resource, params);
   },
 
-  // ✅ POST /api/artikel/create untuk Create
+  // ✅ POST /api/artikel untuk Create
   create: async (resource, params) => {
     if (resource === "artikel") {
-      const res = await fetch(`${API_URL}/${resource}/create`, {
+      const res = await fetch(`${API_URL}/${resource}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(params.data),
